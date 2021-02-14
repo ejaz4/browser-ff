@@ -81,13 +81,17 @@ jobs:
 
       - name: Install Docker
         run: |
-          brew install docker
-          eval $(docker-machine env default)
+          brew install docker docker-machine
+          brew cask install virtualbox
+          docker-machine create --driver virtualbox default
+          docker-machine env default
+          eval "$(docker-machine env default)"
 
       - name: Build
         run: |
           docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
           docker create db-windows-build
+          docker-machine stop defaulter
         
       # - name: Upload artifacts
       #   shell: bash
