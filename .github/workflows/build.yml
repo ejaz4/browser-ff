@@ -81,7 +81,7 @@ jobs:
 
       - name: Install Docker
         run: |
-          brew cask install docker virtualbox
+          brew install --cask docker virtualbox
           brew install docker-machine
           docker-machine create --driver virtualbox default
           docker-machine restart
