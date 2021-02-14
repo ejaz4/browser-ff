@@ -92,6 +92,21 @@ jobs:
 
       - name: Build
         run: |
+          echo "PATH="$PATH
+          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
+          echo "DOCKER_HOST="$DOCKER_HOST
+          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
+          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
+          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
+          echo "==== sourcing .bashrc \/ \/ ==="
+          source ~/.bashrc
+          echo "==== sourcing .bashrc /\ /\ ==="
+          echo "PATH="$PATH
+          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
+          echo "DOCKER_HOST="$DOCKER_HOST
+          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
+          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
+          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
           sudo docker-machine env default
           sudo docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
           sudo docker create db-windows-build
