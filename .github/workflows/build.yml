@@ -82,6 +82,7 @@ jobs:
       - name: Install Docker
         run: |
           brew install docker
+          eval $(docker-machine env default)
 
       - name: Build
         run: |
