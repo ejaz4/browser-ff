@@ -81,9 +81,13 @@ jobs:
 
       - name: Install Docker
         run: |
-          brew install docker docker-machine
-          brew install --cask virtualbox
-          brew services start docker-machine
+          brew cask install docker virtualbox
+          brew install docker-machine
+          docker-machine create --driver virtualbox default
+          docker-machine restart
+          eval "$(docker-machine env default)"
+          docker-machine restart
+          docker run hello-world
 
       - name: Build
         run: |
