@@ -77,17 +77,75 @@ jobs:
   windows:
     runs-on: macos-10.15
     steps:
+      # Installing Docker on macOS is tricky, see: https://github.com/actions/virtual-environments/issues/115
+
       - uses: actions/checkout@v2
 
       - name: Install Docker
         run: |
-          brew install --cask docker virtualbox
+          brew install docker
           brew install docker-machine
-          docker-machine restart
-          docker run hello-world
+          brew install boot2docker boot2docker-cli
+
+      - name: Verify installation
+        run: |
+          which docker
+          which docker-machine
+
+      - name: Create image cache for Docker
+        run: mkdir -p ~/.docker/machine/cache/
+      
+      - name: Download boot2docker
+        run: | 
+          cd ~/.docker/machine/cache/
+          curl -Lo boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.12/boot2docker.iso
+          ls -lha 
+          file boot2docker.iso
+          
+      - name: Create machine
+        run: |
+          docker-machine create --driver virtualbox --virtualbox-boot2docker-url ~/.docker/machine/cache/boot2docker.iso default
+          docker-machine ls
+          
+      - name: Install docker-sync
+        run: |
+          gem install docker-sync --user-install
+          GEMPATH=$(gem env | grep  'USER INSTALLATION DIRECTORY' | cut -d: -f2 | tr -d ' ')/bin
+          echo GEMPATH=$GEMPATH
+          echo "export PATH=\"\$PATH:$GEMPATH\"" >> ~/.bashrc
+          source ~/.bashrc
+          echo $PATH
+          which docker-sync
+          docker-sync
+  
+      - name: Export dm env
+        run: |
+          docker-machine env default >> ~/.bashrc 
+          echo "COMPOSE_INTERACTIVE_NO_CLI=0" >> ~/.bashrc 
+
+      - name: Source docker machine environment
+        run: |
+          echo "PATH="$PATH
+          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
+          echo "DOCKER_HOST="$DOCKER_HOST
+          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
+          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
+          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
+          echo "==== sourcing .bashrc \/ \/ ==="
+          source ~/.bashrc
+          echo "==== sourcing .bashrc /\ /\ ==="
+          echo "PATH="$PATH
+          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
+          echo "DOCKER_HOST="$DOCKER_HOST
+          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
+          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
+          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
 
       - name: Build
         run: |
+          source ~/.bashrc
+          echo "DOCKER_HOST="$DOCKER_HOST
+          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
           docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
           docker create db-windows-build
         
