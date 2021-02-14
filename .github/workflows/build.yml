@@ -82,7 +82,7 @@ jobs:
       - name: Install Docker
         run: |
           brew install docker-machine docker
-          sudo docker –version
+          sudo docker --version
 
       - name: Build
         run: |
