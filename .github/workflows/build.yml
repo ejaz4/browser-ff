@@ -86,6 +86,9 @@ jobs:
 
       - name: Build
         run: |
+          docker-machine start
+          docker-machine env
+          eval "$(docker-machine env default)" 
           sudo docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
           sudo docker create db-windows-build
         
