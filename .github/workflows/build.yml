@@ -84,8 +84,6 @@ jobs:
           brew install --cask docker virtualbox
           brew install docker-machine
           docker-machine restart
-          eval "$(docker-machine env default)"
-          docker-machine restart
           docker run hello-world
 
       - name: Build
