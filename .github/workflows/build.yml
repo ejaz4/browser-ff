@@ -87,7 +87,6 @@ jobs:
           which docker
           which docker-machine
           
-      
       - name: Download Boot2Docker
         run: | 
           mkdir -p ~/.docker/machine/cache/
@@ -141,8 +140,8 @@ jobs:
           source ~/.bashrc
           echo "DOCKER_HOST="$DOCKER_HOST
           echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
-          sudo docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
-          sudo docker create db-windows-build
+          docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
+          docker create db-windows-build
 
       # - name: Upload artifacts
       #   shell: bash
