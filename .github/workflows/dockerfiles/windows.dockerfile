@@ -33,7 +33,14 @@ RUN sed.exe -i '/ac_add_options --with-ccache=sccache/s/^/#/g' C:\worker\build\b
 RUN npm i typescript
 
 CMD ./melon download `
-    ./windows-init.sh ` 
+    cd src `
+    git.exe init `
+    git.exe config core.autocrlf false `
+    git.exe checkout --orphan ff `
+    git.exe add . `
+    git.exe commit -am "Firefox" `
+    git.exe checkout -b dot `
+    cd .. `
     ./melon fix-le ` 
     ./melon import `
     type nul > C:\script `
