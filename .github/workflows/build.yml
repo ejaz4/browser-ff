@@ -75,83 +75,32 @@ jobs:
             webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   windows:
-    runs-on: windows-2019
-    env:
-      CI_SKIP_INIT: true
-      SHELL: /bin/sh
+    runs-on: macos-10.15
     steps:
-      - name: Disable autocrlf
-        shell: bash
-        run: |
-          git config --global core.autocrlf false
-
       - uses: actions/checkout@v2
 
-      - name: Disable sscache
-        shell: bash
+      - name: Install Docker
         run: |
-          sed -i '/ac_add_options --with-ccache=sccache/s/^/#/g' configs/windows/mozconfig
-          cat configs/common/mozconfig
-          cat configs/windows/mozconfig
-
-      - name: Set up Git
-        shell: bash
-        run: |
-          git config --global user.email "72629236+dothq-robot@users.noreply.github.com"
-          git config --global user.name "dothq-robot"
-
-      - name: Clone mozillabuild
-        run: |
-          curl https://cdn.dothq.co/artifacts/tools/mozilla-build.zip -o mozilla-build.zip
-          ls
-          7z x mozilla-build.zip -aoa -oC:\mozilla-build 
-
-      - name: Install dependencies
-        shell: bash
-        run: |
-          npm i typescript
-
-      - name: Download workspace
-        shell: bash
-        run: |
-          ./melon download
-          ./windows-init.sh
-
-      - name: Import patches
-        shell: bash
-        run: |
-          ./melon fix-le
-          ./melon import
-
-      - name: Update path
-        shell: bash
-        run: echo ::set-output name=NPATH::$(echo $PATH)
-        id: path
+          brew install docker
 
       - name: Build
-        shell: cmd
         run: |
-          type nul > C:\script
-          echo PATH="$PATH:${{ steps.path.outputs.NPATH }}" >> C:\script
-          echo echo $PATH >> C:\script
-          echo cd /d/a/browser-ff/browser-ff/src >> C:\script
-          echo MOZCONFIG=../configs/windows/mozconfig ./mach build >> C:\script
-          echo MOZCONFIG=../configs/windows/mozconfig ./mach package >> C:\script
-          C:\mozilla-build\start-shell.bat "C:\script"
+          docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
+          docker create db-windows-build
         
-      - name: Upload artifacts
-        shell: bash
-        run: |
-          ARTIFACT_NAME="$(find . -name 'dot-*.exe')"
-          AZURE_CONNECTION_STRING="${{ secrets.AZURE_CONNECTION_STRING }}" node upload-artifacts.js windows $ARTIFACT_NAME
+      # - name: Upload artifacts
+      #   shell: bash
+      #   run: |
+      #     ARTIFACT_NAME="$(find . -name 'dot-*.exe')"
+      #     AZURE_CONNECTION_STRING="${{ secrets.AZURE_CONNECTION_STRING }}" node upload-artifacts.js windows $ARTIFACT_NAME
 
-      - name: Build success webhook
-        uses: rjstone/discord-webhook-notify@v1
-        with:
-            severity: info
-            username: Build
-            color: '#2f3136'
-            avatarUrl: https://github.com/dothq.png
-            description: '**✅ Build on ${{ runner.os }} was successful**'
-            text: <@&805943648067780648>
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      # - name: Build success webhook
+      #   uses: rjstone/discord-webhook-notify@v1
+      #   with:
+      #       severity: info
+      #       username: Build
+      #       color: '#2f3136'
+      #       avatarUrl: https://github.com/dothq.png
+      #       description: '**✅ Build on ${{ runner.os }} was successful**'
+      #       text: <@&805943648067780648>
+      #       webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
