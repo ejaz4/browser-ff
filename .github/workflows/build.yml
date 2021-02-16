@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, windows-docker ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, windows-docker ]
   workflow_dispatch:
   
 jobs:
@@ -79,69 +79,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Docker
+      - name: Install Vagrant
         run: |
-          brew install docker
-          brew install docker-machine
-          brew install boot2docker boot2docker-cli
-          which docker
-          which docker-machine
-          
-      - name: Download Boot2Docker
-        run: | 
-          mkdir -p ~/.docker/machine/cache/
-          cd ~/.docker/machine/cache/
-          curl -Lo boot2docker.iso https://github.com/boot2docker/boot2docker/releases/download/v19.03.5/boot2docker.iso
-          ls -lha 
-          file boot2docker.iso
-          
-      - name: Create Docker Machine
-        run: |
-          docker-machine create --driver virtualbox --virtualbox-boot2docker-url ~/.docker/machine/cache/boot2docker.iso default
-          echo "-"
-          docker-machine ls
-          
-      - name: Install docker-sync
-        run: |
-          gem install docker-sync --user-install
-          GEMPATH=$(gem env | grep  'USER INSTALLATION DIRECTORY' | cut -d: -f2 | tr -d ' ')/bin
-          echo GEMPATH=$GEMPATH
-          echo "export PATH=\"\$PATH:$GEMPATH\"" >> ~/.bashrc
-          source ~/.bashrc
-          echo $PATH
-          docker-sync
-  
-      - name: Export environment
-        run: |
-          docker-machine env default >> ~/.bashrc 
-          echo "COMPOSE_INTERACTIVE_NO_CLI=0" >> ~/.bashrc 
-          echo "echo Sourced file ~/.bashrc "$(date) >> ~/.bashrc 
-
-      - name: Source Docker Machine environment
-        run: |
-          echo "PATH="$PATH
-          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
-          echo "DOCKER_HOST="$DOCKER_HOST
-          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
-          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
-          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
-          echo "==== sourcing .bashrc \/ \/ ==="
-          source ~/.bashrc
-          echo "==== sourcing .bashrc /\ /\ ==="
-          echo "PATH="$PATH
-          echo "DOCKER_TLS_VERIFY="$DOCKER_TLS_VERIFY
-          echo "DOCKER_HOST="$DOCKER_HOST
-          echo "DOCKER_CERT_PATH="$DOCKER_CERT_PATH
-          echo "DOCKER_MACHINE_NAME="$DOCKER_MACHINE_NAME
-          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
-
-      - name: Build
-        run: |
-          source ~/.bashrc
-          echo "DOCKER_HOST="$DOCKER_HOST
-          echo "COMPOSE_INTERACTIVE_NO_CLI="$COMPOSE_INTERACTIVE_NO_CLI
-          docker build . -f .github/workflows/dockerfiles/windows.dockerfile -t db-windows-build
-          docker create db-windows-build
+          brew install virtualbox
+          brew install virtualbox-extension-pack
+          brew cask install vagrant
+          brew install vagrant-completion
+          ssh-keygen -t rsa
+          vagrant --version
 
       # - name: Upload artifacts
       #   shell: bash
