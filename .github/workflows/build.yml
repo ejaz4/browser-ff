@@ -83,6 +83,7 @@ jobs:
         run: |
           brew install virtualbox-extension-pack
           brew install vagrant-completion
+          ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
           vagrant --version
 
       - name: Start VM
