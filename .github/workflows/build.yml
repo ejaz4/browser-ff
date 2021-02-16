@@ -83,7 +83,7 @@ jobs:
         run: |
           brew install virtualbox
           brew install virtualbox-extension-pack
-          brew cask install vagrant
+          brew install --cask vagrant
           brew install vagrant-completion
           ssh-keygen -t rsa
           vagrant --version
