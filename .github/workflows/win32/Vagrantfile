@@ -10,8 +10,8 @@ Vagrant.configure("2") do |config|
     windows.vm.box = "Microsoft/EdgeOnWindows10"
     windows.vm.box_version = "1.0"
 
-    windows.ssh.username = "vagrant";
-    windows.ssh.password = "vagrant";
-    windows.ssh.insert_key = true;
+    windows.ssh.username = "IEUser"  
+    windows.ssh.password = "Passw0rd!"      
+    windows.ssh.insert_key = false  
   end
 end
