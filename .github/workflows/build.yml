@@ -8,71 +8,71 @@ on:
   workflow_dispatch:
   
 jobs:
-  linux:
-    runs-on: ubuntu-20.04
-    env:
-      CI_SKIP_INIT: true
-      SHELL: /bin/sh
-    steps:
-      - uses: actions/checkout@v2
+  # linux:
+  #   runs-on: ubuntu-20.04
+  #   env:
+  #     CI_SKIP_INIT: true
+  #     SHELL: /bin/sh
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: Disable sscache
-        run: |
-          sed -i '/ac_add_options --with-ccache=sccache/s/^/#/g' configs/linux/mozconfig
-          cat configs/linux/mozconfig
+  #     - name: Disable sscache
+  #       run: |
+  #         sed -i '/ac_add_options --with-ccache=sccache/s/^/#/g' configs/linux/mozconfig
+  #         cat configs/linux/mozconfig
 
-      - name: Set up Git User
-        run: |
-          git config --global user.email "72629236+dothq-robot@users.noreply.github.com"
-          git config --global user.name "dothq-robot"
+  #     - name: Set up Git User
+  #       run: |
+  #         git config --global user.email "72629236+dothq-robot@users.noreply.github.com"
+  #         git config --global user.name "dothq-robot"
 
-      - name: Install dependencies
-        run: |
-          npm i typescript
+  #     - name: Install dependencies
+  #       run: |
+  #         npm i typescript
 
-      - name: Download workspace
-        run: |
-          ./melon download
-          cd src
-          git init
-          echo Init
-          git checkout --orphan base
-          echo Checkout
-          git add -f .
-          echo Add
-          git commit -am "Firefox"
-          echo Commit
-          git checkout -b dot
-          echo Checkout 2
+  #     - name: Download workspace
+  #       run: |
+  #         ./melon download
+  #         cd src
+  #         git init
+  #         echo Init
+  #         git checkout --orphan base
+  #         echo Checkout
+  #         git add -f .
+  #         echo Add
+  #         git commit -am "Firefox"
+  #         echo Commit
+  #         git checkout -b dot
+  #         echo Checkout 2
 
-      - name: Import patches
-        run: ./melon import
+  #     - name: Import patches
+  #       run: ./melon import
 
-      - name: Build
-        run: |
-          cd src
-          ./mach bootstrap --application-choice browser --no-interactive
-          cd ..
-          ./melon build
-          cd src
-          ./mach package
-          cd ..
+  #     - name: Build
+  #       run: |
+  #         cd src
+  #         ./mach bootstrap --application-choice browser --no-interactive
+  #         cd ..
+  #         ./melon build
+  #         cd src
+  #         ./mach package
+  #         cd ..
         
-      - name: Upload artifacts
-        run: |
-          ARTIFACT_NAME="$(find . -name 'dot-*.tar.bz2')"
-          AZURE_CONNECTION_STRING="${{ secrets.AZURE_CONNECTION_STRING }}" node upload-artifacts.js linux $ARTIFACT_NAME
+  #     - name: Upload artifacts
+  #       run: |
+  #         ARTIFACT_NAME="$(find . -name 'dot-*.tar.bz2')"
+  #         AZURE_CONNECTION_STRING="${{ secrets.AZURE_CONNECTION_STRING }}" node upload-artifacts.js linux $ARTIFACT_NAME
 
-      - name: Build success webhook
-        uses: rjstone/discord-webhook-notify@v1
-        with:
-            severity: info
-            username: Build
-            color: '#2f3136'
-            avatarUrl: https://github.com/dothq.png
-            description: '**✅ Build on ${{ runner.os }} was successful**'
-            text: <@&805943648067780648>
-            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+  #     - name: Build success webhook
+  #       uses: rjstone/discord-webhook-notify@v1
+  #       with:
+  #           severity: info
+  #           username: Build
+  #           color: '#2f3136'
+  #           avatarUrl: https://github.com/dothq.png
+  #           description: '**✅ Build on ${{ runner.os }} was successful**'
+  #           text: <@&805943648067780648>
+  #           webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
 
   windows:
     runs-on: macos-10.15
