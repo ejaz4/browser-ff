@@ -79,11 +79,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Vagrant
+      - name: Install Vagrant extras
         run: |
           brew install virtualbox-extension-pack
           brew install vagrant-completion
-          ssh-keygen -t rsa -G /Users/runner/.ssh/id_rsa
           vagrant --version
 
       # - name: Upload artifacts
