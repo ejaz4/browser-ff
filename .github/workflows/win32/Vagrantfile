@@ -4,14 +4,14 @@
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vm|
     vm.memory = "10240" # 10gb should be enough
-
-    vm.ssh.username = "vagrant";
-    vm.ssh.password = "vagrant";
-    vm.ssh.insert_key = true;
   end
 
   config.vm.define "windows" do |windows|
     windows.vm.box = "Microsoft/EdgeOnWindows10"
     windows.vm.box_version = "1.0"
+
+    windows.ssh.username = "vagrant";
+    windows.ssh.password = "vagrant";
+    windows.ssh.insert_key = true;
   end
 end
