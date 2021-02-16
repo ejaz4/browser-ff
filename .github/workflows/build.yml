@@ -83,7 +83,7 @@ jobs:
         run: |
           brew install virtualbox-extension-pack
           brew install vagrant-completion
-          ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+          wget --no-check-certificate https://raw.githubusercontent.com/hashicorp/vagrant/master/keys/vagrant.pub -O .ssh/authorized_keys
           vagrant --version
 
       - name: Start VM
