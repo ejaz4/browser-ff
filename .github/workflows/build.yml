@@ -77,13 +77,20 @@ jobs:
   windows:
     runs-on: macos-10.15
     steps:
-      - uses: actions/checkout@v2
-
       - name: Install Vagrant extras
         run: |
           brew install virtualbox-extension-pack
           brew install vagrant-completion
           vagrant --version
+
+      - name: Start VM
+        run: |
+          cd .github/workflows/win32
+          vagrant up windows
+
+      - name: Clone
+        run: |
+          vagrant ssh -c "git clone https://github.com/dothq/browser-ff"
 
       # - name: Upload artifacts
       #   shell: bash
