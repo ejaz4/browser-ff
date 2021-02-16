@@ -81,11 +81,9 @@ jobs:
 
       - name: Install Vagrant
         run: |
-          brew install virtualbox
           brew install virtualbox-extension-pack
-          brew install --cask vagrant
           brew install vagrant-completion
-          ssh-keygen -t rsa -i /Users/runner/.ssh/id_rsa
+          ssh-keygen -t rsa -G /Users/runner/.ssh/id_rsa
           vagrant --version
 
       # - name: Upload artifacts
