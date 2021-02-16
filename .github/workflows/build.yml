@@ -77,6 +77,8 @@ jobs:
   windows:
     runs-on: macos-10.15
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install Vagrant extras
         run: |
           brew install virtualbox-extension-pack
