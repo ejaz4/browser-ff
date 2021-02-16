@@ -88,6 +88,8 @@ jobs:
       - name: Start VM
         run: |
           cd .github/workflows/win32
+          vagrant ssh-config > ssh.config
+          ssh -F ssh.config default
           vagrant up windows
 
       - name: Clone
